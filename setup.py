@@ -53,8 +53,8 @@ def get_dependency_version(dependency, list_of_dependencies):
 DISTNAME = 'prolexa'
 VERSION = prolexa.__version__
 DESCRIPTION = 'Prolexa Plus'
-with open('README.md') as f:
-    LONG_DESCRIPTION = f.read()
+#with open('README.md') as f:
+    #LONG_DESCRIPTION = f.read()
 MAINTAINER = 'Kacper Sokol'
 MAINTAINER_EMAIL = 'k.sokol@bristol.ac.uk'
 URL = 'https://github.com/so-cool/{}'.format(DISTNAME)
@@ -77,7 +77,7 @@ def setup_package():
                     download_url=DOWNLOAD_URL,
                     version=VERSION,
                     install_requires=INSTALL_REQUIRES,
-                    long_description=LONG_DESCRIPTION,
+                    #long_description=LONG_DESCRIPTION,
                     python_requires=PYTHON_REQUIRES,
                     #zip_safe=ZIP_SAFE,
                     packages=PACKAGES,
