@@ -57,12 +57,18 @@ sword --> [that].
 sentence1(C) --> determiner(N,M1,M2,C),noun(N,M1),verb_phrase(N,M2).
 sentence1([(L:-true)]) --> proper_noun(N,X),verb_phrase(N,X=>L).
 
+verb_phrase(s,M) --> transitive_verb(s,Y=>M),noun(s,Y).
 verb_phrase(s,M) --> [is],property(s,M).
 verb_phrase(p,M) --> [are],property(p,M).
+verb_phrase(_N,M) --> [can],iverb(p,M).
 verb_phrase(N,M) --> iverb(N,M).
+
+
+transitive_verb(s,Y=>X=>has(X,Y)) --> [has,a].
 
 property(N,M) --> adjective(N,M).
 property(s,M) --> [a],noun(s,M).
+property(s,M) --> [an],noun(s,M).
 property(p,M) --> noun(p,M).
 
 determiner(s,X=>B,X=>H,[(H:-B)]) --> [every].
