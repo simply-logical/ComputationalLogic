@@ -4,4 +4,4 @@ nltk>=3.5
 pyswip>=0.2.9
 contractions>=0.0.24
 spacy>=2.3.5
-textacy>=0.10.1
+textacy==0.10.1
