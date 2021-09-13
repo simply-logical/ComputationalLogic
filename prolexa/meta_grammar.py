@@ -7,7 +7,7 @@ from enum import Enum
 from prolexa import PACKAGE_PATH, PROLOG_PATH
 
 #from common_sense import add_rules, fetch_standard_input
-from utils import Tagger, POS, standardise_tags, remove_punctuation, lemmatise,is_plural
+from prolexa.utils import Tagger, POS, standardise_tags, remove_punctuation, lemmatise,is_plural
 
 PROLOG_DET_REGEX = r'determiner\([a-z],X=>B,X=>H,\[\(H:-B\)\]\)(.*)'
 PROLOG_DET = 'determiner(p,X=>B,X=>H,[(H:-B)]) --> [{}].\n'
