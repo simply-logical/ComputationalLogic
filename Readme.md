@@ -1,4 +1,7 @@
+[![Read Assignment Description](https://img.shields.io/badge/assignment-description-blue)](assignment.md)  
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/simply-logical/ComputationalLogic/blob/prolexa-plus/Prolexa_Plus_Demo_Notebook.ipynb)
+
+
 # Prolexa #
 This repository contains Prolog code for a simple question-answering assistant.
 The top-level module is `prolexa/prolog/prolexa.pl`, which can either be run in
