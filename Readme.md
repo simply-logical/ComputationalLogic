@@ -1,6 +1,10 @@
 [![Read Assignment Description](https://img.shields.io/badge/assignment-description-blue)](assignment.md)  
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/simply-logical/ComputationalLogic/blob/prolexa-plus/Prolexa_Plus_Demo_Notebook.ipynb)
 
+This repository is provided for general use and as the basis for the 2021 assignment for *Computational Logic for Artificial Intelligence* (COMSM0022). 
+CDT students taking the assignment should clone this repository. 
+The two buttons above give more details about the assignment, and enable running the Prolexa assistant in the browser using Google Colab. 
+The rest of this page provides a bit more details about what the code can do, how it can be run from the command line, and how it can be integrated with an Amazon Alexa device. 
 
 # Prolexa #
 This repository contains Prolog code for a simple question-answering assistant.
