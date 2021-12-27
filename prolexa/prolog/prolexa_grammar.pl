@@ -65,12 +65,13 @@ sword --> [that].
 
 sentence1(C) --> determiner(N,M1,M2,C),noun(N,M1),verb_phrase(N,M2).%, [sent1].
 sentence1([(L:-true)]) --> proper_noun(N,X),verb_phrase(N,X=>L).%, [sent2].
+
+
+sentence1(C) --> determiner_neg(N,M1,M2,C), noun(N,M1), neg_verb_phrase(N,M2).%, [sent1].
 sentence1([(not(L):-true)]) --> proper_noun(N,X),neg_verb_phrase(N,X=>L).%, [sent3].
 % example "pixie is not red"
 
 %sentence1([(not(M1):-not(M2))]) --> determiner(N,M1,M2,[(M1:-M2)]), noun(N,M1), neg_verb_phrase(N,M2).
-
-
 
 % example "pixels are red, blue or green"
 
@@ -92,19 +93,17 @@ property(p,M) --> noun(p,M).
 determiner(s,X=>B,X=>H,[(H:-B)]) --> [every].
 determiner(p,X=>B,X=>H,[(H:-B)]) --> [all].
 
-
 determiner(s,X=>B,X=>H,[(not(H):-not(B))]) --> [every].
 determiner(p,X=>B,X=>H,[(not(H):-not(B))]) --> [all].
 
-determiner(p,X=>H,X=>B,[(not(H):-not(B))]) --> [all].
 determiner(s,X=>H,X=>B,[(not(H):-not(B))]) --> [every].
+determiner(p,X=>H,X=>B,[(not(H):-not(B))]) --> [all].
 
-determiner(s,X=>H,X=>B,[(H:-not(B))]) --> [no].
-determiner(p,X=>H,X=>B,[(H:-not(B))]) --> [no].
+determiner_neg(s,X=>H,X=>B,[(H:-not(B))]) --> [every].
+determiner_neg(p,X=>H,X=>B,[(H:-not(B))]) --> [all].
 
-
-determiner(s,X=>B,X=>H,[(not(H):-B)]) --> [no].
-determiner(p,X=>B,X=>H,[(not(H):-B)]) --> [no].
+determiner_neg(s,X=>B,X=>H,[(not(H):-B)]) --> [every].
+determiner_neg(p,X=>B,X=>H,[(not(H):-B)]) --> [all].
 
 % neg_determiner(s,X=>not(B),X=>not(H),[(not(H):-not(B))]) --> [every].
 
