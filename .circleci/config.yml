@@ -1,0 +1,28 @@
+version: 2.1
+
+workflows:
+  build_and_test:
+    jobs:
+      - build_test
+
+jobs:
+  build_test:
+    docker:
+       - image: continuumio/miniconda3
+    steps:
+      - checkout       # pulls source code to the working directory
+      - restore_cache: # restores saved dependency cache if the Branch key template or requirements-test.txt files have not changed since the previous run
+          key: deps1-{{ .Branch }}-{{ checksum ".circleci/requirements-test.txt" }}
+      - run: apt-get update
+      - run: apt-get install swi-prolog -y
+    #  - run: apt-get install gcc
+      - run:           # install dependencies
+          command: |
+            .circleci/install.sh
+      - save_cache:    # special step to save dependency cache
+          key: deps1-{{ .Branch }}-{{ checksum ".circleci/requirements-test.txt" }}
+          paths:
+            - "venv"
+      - run:           # run test suite
+          command: |
+            .circleci/run_tests.sh
