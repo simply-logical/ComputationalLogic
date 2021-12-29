@@ -36,7 +36,7 @@ prove_question(Query,Answer):-
 		transform(not(Query),Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
-	; Answer = ""
+	; Answer = "Sorry, I don\'t think this is the case"
 	).
 
 
@@ -51,12 +51,12 @@ explain_question(Query,SessionId,Answer):-
 		atomic_list_concat([therefore|L]," ",Last),
 		append(Msg,[Last],Messages),
 		atomic_list_concat(Messages," ; ",Answer)
-	% ; prove_rb(not(Query),Rulebase,[],Proof), write_debug(" Proved negative! ") ->
-	% 	maplist(pstep2message,Proof,Msg),
-	% 	phrase(sentence1([(not(Query):-true)]),L),
-	% 	atomic_list_concat([therefore|L]," ",Last),
-	% 	append(Msg,[Last],Messages),
-	% 	atomic_list_concat(Messages," NOOOOOO negation; ",Answer)
+	; prove_rb(not(Query),Rulebase,[],Proof), write_debug("\n\nProved negative! \n") ->
+		maplist(pstep2message,Proof,Msg),
+		phrase(sentence1([(not(Query):-true)]),L),
+		atomic_list_concat([therefore|L]," ",Last),
+		append(Msg,[Last],Messages),
+		atomic_list_concat(Messages," ; ",Answer)
  	;
 		Answer = 'Sorry, I don\'t think this is the case'
 	).
@@ -84,6 +84,7 @@ known_rule([Rule],SessionId):-
 	     add_body_to_rulebase(B,Rulebase,RB2),
 	     prove_rb(H,RB2))).
 
+
 add_body_to_rulebase((A,B),Rs0,Rs):-!,
 	add_body_to_rulebase(A,Rs0,Rs1),
 	add_body_to_rulebase(B,Rs1,Rs).
@@ -106,12 +107,23 @@ prove_rb(A,Rulebase,P0,P):-
     find_clause((A:-B),Rule,Rulebase),
 	prove_rb(B,Rulebase,[p(A,Rule)|P0],P).
 
+% %move A(X):-B(X) -->  not(B(X)):-not(A(X))
+% prove_rb(not(B),Rulebase,P0,P):-   %example where not(B) :- true.
+%     find_clause((A:-B),Rule,Rulebase), write_debug('double negative called'),   %find a clause A :- B
+% 	prove_rb(not(A),Rulebase,[p(not(B),Rule)|P0],P).   %pass on the rule not(B) :- not(A)
+
+% %move A(X):-not(B(X)) -->  B(X):-not(A(X))
+% prove_rb(B,Rulebase,P0,P):-
+%     find_clause((A:-not(B)),Rule,Rulebase), write_debug('single negative called'),
+% 	prove_rb(not(A),Rulebase,[p(B,Rule)|P0],P).
 
 % top-level version that ignores proof
 prove_rb(Q,RB):-
 	prove_rb(Q,RB,[],_P).			% calls back to prove_rb/4
 
 %%% Utilities from nl_shell.pl %%%
+
+
 
 find_clause(Clause,Rule,[Rule|_Rules]):-
 	copy_term(Rule,[Clause]).	% do not instantiate Rule
@@ -128,10 +140,11 @@ transform(A,[(A:-true)]).
 
 % collect all stored rules
 all_rules(Answer):-
+	write_debug("all rules called"),
 	findall(R,prolexa:stored_rule(_ID,R),Rules),
 	maplist(rule2message,Rules,Messages),
 	( Messages=[] -> Answer = "I know nothing"
-	; otherwise -> atomic_list_concat(Messages,". ",Answer)
+	; write_debug('building message,'), otherwise -> atomic_list_concat(Messages,". ",Answer)
 	).
 
 % convert rule to sentence (string)
