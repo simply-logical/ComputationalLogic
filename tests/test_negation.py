@@ -1,7 +1,7 @@
 from pyswip import Prolog
 import prolexa.meta_grammar as meta
-# import nltk
-# nltk.download('omw-1.4')
+import nltk
+nltk.download('omw-1.4')
 
 # init
 pl = Prolog()
