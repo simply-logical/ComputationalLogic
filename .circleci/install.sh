@@ -4,8 +4,6 @@
 #              - docker
 #              - gcc
 #              - swi-prolog
-sudo apt-get install swi-prolog
-sudo apt-get install gcc
 
 # =========== Python ===============
 # make sure conda is accessable
