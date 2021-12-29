@@ -32,8 +32,9 @@ stored_rule(1,[(not(teacher(X)):-not(happy(X)))]).
 stored_rule(1,[(not(happy(pixie)):-true)]).
 
 
+stored_rule(1,[(teacher(X):-not(student(X)))]).
 stored_rule(1,[(student(X):-not(teacher(X)))]).
-stored_rule(1,[(not(student(X)):-teacher(X))]).
+%stored_rule(1,[(not(student(X)):-teacher(X))]).
 
 % %additional rules for default reasoning
 % stored_rule(1,[(default(fly(X):-bird(X)))]).

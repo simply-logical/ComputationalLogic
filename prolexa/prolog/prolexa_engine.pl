@@ -18,7 +18,7 @@ prove_question(Query,SessionId,Answer):-
 		transform(Query,Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
- 	; prove_rb(not(Query),Rulebase) ->
+ 	; write_debug('trying negative'), prove_rb(not(Query),Rulebase), write_debug("\n\nProved negative! \n") ->
 		transform(not(Query),Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
@@ -32,7 +32,7 @@ prove_question(Query,Answer):-
 		transform(Query,Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
-	; prove_rb(not(Query),Rulebase) ->
+	; write_debug('trying negative'), prove_rb(not(Query),Rulebase) , write_debug("\n\nProved negative! \n")->
 		transform(not(Query),Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
@@ -51,7 +51,7 @@ explain_question(Query,SessionId,Answer):-
 		atomic_list_concat([therefore|L]," ",Last),
 		append(Msg,[Last],Messages),
 		atomic_list_concat(Messages," ; ",Answer)
-	; prove_rb(not(Query),Rulebase,[],Proof), write_debug("\n\nProved negative! \n") ->
+	; write_debug('trying negative'), prove_rb(not(Query),Rulebase,[],Proof), write_debug("\n\nProved negative! \n") ->
 		maplist(pstep2message,Proof,Msg),
 		phrase(sentence1([(not(Query):-true)]),L),
 		atomic_list_concat([therefore|L]," ",Last),
@@ -103,19 +103,17 @@ prove_rb((A,B),Rulebase,P0,P):-!,
 	conj_append(C,B,D),
     prove_rb(D,Rulebase,[p((A,B),Rule)|P0],P).
 
-prove_rb(A,Rulebase,P0,P):-
-    find_clause((A:-B),Rule,Rulebase),
+prove_rb(A,Rulebase,P0,P):- %We have A :- true, tries to find A:-B then prove B :- true
+    find_clause((A:-B),Rule,Rulebase),% write_debug(Rule),
 	prove_rb(B,Rulebase,[p(A,Rule)|P0],P).
 
-% %move A(X):-B(X) -->  not(B(X)):-not(A(X))
-% prove_rb(not(B),Rulebase,P0,P):-   %example where not(B) :- true.
-%     find_clause((A:-B),Rule,Rulebase), write_debug('double negative called'),   %find a clause A :- B
-% 	prove_rb(not(A),Rulebase,[p(not(B),Rule)|P0],P).   %pass on the rule not(B) :- not(A)
+% prove_rb(A,Rulebase,P0,P):- %We have A :- true, tries to find A:-not(B) then prove not(B) :- true
+%     find_clause((A:-not(B)),Rule,Rulebase), write_debug('clause 1'),  write_debug(Rule),
+% 	prove_rb(not(B),Rulebase,[p(A,Rule)|P0],P).
 
-% %move A(X):-not(B(X)) -->  B(X):-not(A(X))
-% prove_rb(B,Rulebase,P0,P):-
-%     find_clause((A:-not(B)),Rule,Rulebase), write_debug('single negative called'),
-% 	prove_rb(not(A),Rulebase,[p(B,Rule)|P0],P).
+prove_rb(A,Rulebase,P0,P):- %We have A :- true, tries to find A:-not(B) then prove not(B) :- true
+    find_clause((B:-not(A)),Rule,Rulebase), write_debug(Rule),  %works because (uniquely) A :- not(B) is equiv. to B :- not(A)
+	prove_rb(not(B),Rulebase,[p(A,Rule)|P0],P).
 
 % top-level version that ignores proof
 prove_rb(Q,RB):-
