@@ -20,14 +20,27 @@
 
 %some intial stored rules
 stored_rule(1,[(mortal(X):-human(X))]).
-stored_rule(1,[(human(peter):-true)]).
+stored_rule(1,[(mortal(peter):-true)]).
 stored_rule(1,[(teacher(peter):-true)]).
 
+% stored_rule(1,[(		)])
+
 stored_rule(1,[(happy(X):-teacher(X))]).
+%stored_rule(1,[(teacher(X):-happy(X))]).
 stored_rule(1,[(not(teacher(X)):-not(happy(X)))]).
-%stored_rule(1,[(not(happy(pixie)):-true)]).
+
 stored_rule(1,[(not(happy(pixie)):-true)]).
+
+
 stored_rule(1,[(student(X):-not(teacher(X)))]).
+stored_rule(1,[(not(student(X)):-teacher(X))]).
+
+% %additional rules for default reasoning
+% stored_rule(1,[(default(fly(X):-bird(X)))]).
+% stored_rule(1,[(not(fly(X)):-penguin(X))]).
+% stored_rule(1,[(bird(X):-penguin(X))]).
+% stored_rule(1,[(penguin(opus):-true)]).
+% stored_rule(1,[(bird(peep):-true)]).
 
 
 %%% Prolexa Command Line Interface %%%
@@ -59,10 +72,12 @@ handle_utterance(SessionId,Utterance,Answer):-
 			assertz(prolexa:stored_rule(SessionId,Rule)),
 			atomic_list_concat(['I will remember that',Utterance],' ',Answer)
 	  )
+
 % B. Utterance is a question that can be answered
 	; phrase(question(Query),UtteranceList),
 	  write_debug(query(Query)),
 	  prove_question(Query,SessionId,Answer) -> true
+
 % C. Utterance is a command that succeeds
 	; write_debug("Goal: "), write_debug(Goal), phrase(command(g(Goal,Answer)),UtteranceList),
 	  write_debug(goal(Goal)),
@@ -70,7 +85,7 @@ handle_utterance(SessionId,Utterance,Answer):-
 % D. None of the above
 	; otherwise -> atomic_list_concat(['I heard you say, ',Utterance,', could you rephrase that please?'],' ',Answer)
 	),
-	write_debug(answer(Answer)).
+	write_debug(answer(Answer)), write_debug('\n\n').
 
 write_debug(Atom):-
 	write(user_error,'*** '),writeln(user_error,Atom),flush_output(user_error).
