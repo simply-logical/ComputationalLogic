@@ -107,13 +107,10 @@ prove_rb(A,Rulebase,P0,P):- %We have A :- true, tries to find A:-B then prove B 
     find_clause((A:-B),Rule,Rulebase),% write_debug(Rule),
 	prove_rb(B,Rulebase,[p(A,Rule)|P0],P).
 
-% prove_rb(A,Rulebase,P0,P):- %We have A :- true, tries to find A:-not(B) then prove not(B) :- true
-%     find_clause((A:-not(B)),Rule,Rulebase), write_debug('clause 1'),  write_debug(Rule),
-% 	prove_rb(not(B),Rulebase,[p(A,Rule)|P0],P).
 
-prove_rb(A,Rulebase,P0,P):- %We have A :- true, tries to find A:-not(B) then prove not(B) :- true
-    find_clause((B:-not(A)),Rule,Rulebase), write_debug(Rule),  %works because (uniquely) A :- not(B) is equiv. to B :- not(A)
-	prove_rb(not(B),Rulebase,[p(A,Rule)|P0],P).
+% prove_rb(A,Rulebase,P0,P):- %We have A :- true, tries to find A:-not(B) then prove not(B) :- true
+%     find_clause((B:-not(A)),Rule,Rulebase), write_debug(Rule),  %works because (uniquely) A :- not(B) is equiv. to B :- not(A)
+% 	prove_rb(not(B),Rulebase,[p(A,Rule)|P0],P).
 
 % top-level version that ignores proof
 prove_rb(Q,RB):-

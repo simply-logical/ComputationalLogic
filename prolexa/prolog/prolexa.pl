@@ -26,7 +26,6 @@ stored_rule(1,[(teacher(peter):-true)]).
 % stored_rule(1,[(		)])
 
 stored_rule(1,[(happy(X):-teacher(X))]).
-%stored_rule(1,[(teacher(X):-happy(X))]).
 stored_rule(1,[(not(teacher(X)):-not(happy(X)))]).
 
 stored_rule(1,[(not(happy(pixie)):-true)]).
@@ -34,14 +33,7 @@ stored_rule(1,[(not(happy(pixie)):-true)]).
 
 stored_rule(1,[(teacher(X):-not(student(X)))]).
 stored_rule(1,[(student(X):-not(teacher(X)))]).
-%stored_rule(1,[(not(student(X)):-teacher(X))]).
 
-% %additional rules for default reasoning
-% stored_rule(1,[(default(fly(X):-bird(X)))]).
-% stored_rule(1,[(not(fly(X)):-penguin(X))]).
-% stored_rule(1,[(bird(X):-penguin(X))]).
-% stored_rule(1,[(penguin(opus):-true)]).
-% stored_rule(1,[(bird(peep):-true)]).
 
 
 %%% Prolexa Command Line Interface %%%
@@ -66,10 +58,25 @@ handle_utterance(SessionId,Utterance,Answer):-
 	maplist(atom_string,UtteranceList,StringListLow),	% strings to atoms
 % A. Utterance is a sentence
 	( phrase(sentence(Rule),UtteranceList),
-	  write_debug(rule(Rule)),
+	  % write_debug(rule(Rule)),
+		% write_debug(Rule is (A:-true)),
+		% write_debug(A),
+		% write_debug((not(A):-true)),
+		% write_debug(A),
 	  ( known_rule(Rule,SessionId) -> % A1. It follows from known rules
 			atomic_list_concat(['I already knew that',Utterance],' ',Answer)
-	  ; otherwise -> % A2. It doesn't follow, so add to stored rules'
+
+		; Rule = [(A :- true)|_], known_rule([(not(A):-true)],SessionId) -> % A2. It contradicts an existing rule
+			retractall(prolexa:stored_rule(_,[(not(A):-true)])),
+			atomic_list_concat(['I\'ll now remember that ',Utterance],' ',Answer),
+			assertz(prolexa:stored_rule(SessionId,Rule))
+
+		; Rule = [(not(A) :- true)|_], known_rule([(A:-true)],SessionId) -> % A2. It contradicts an existing rule
+			retractall(prolexa:stored_rule(_,[(A:-true)])),
+			atomic_list_concat(['I\'ll now remember that ',Utterance],' ',Answer),
+			assertz(prolexa:stored_rule(SessionId,Rule))
+
+	  ; otherwise -> % A3. It doesn't follow, so add to stored rules'
 			assertz(prolexa:stored_rule(SessionId,Rule)),
 			atomic_list_concat(['I will remember that',Utterance],' ',Answer)
 	  )
