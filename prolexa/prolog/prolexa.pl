@@ -19,10 +19,10 @@
 
 
 %some intial stored rules
-% stored_rule(1,[(mortal(X):-human(X))]).
+stored_rule(1,[(mortal(X):-human(X))]).
 
-stored_rule(1,[(happy(X):-teacher(X))]).
-%stored_rule(1,[(teacher(X):-happy(X))]).
+%stored_rule(1,[(happy(X):-teacher(X))]).
+stored_rule(1,[(teacher(X):-happy(X))]).
 
 %stored_rule(1,[(not(happy(X)):-not(teacher(X)))]).
 stored_rule(1,[(not(teacher(X)):-not(happy(X)))]).

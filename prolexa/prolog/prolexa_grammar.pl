@@ -64,7 +64,9 @@ sentence1(C) --> determiner(N,M1,M2,C),noun(N,M1),verb_phrase(N,M2).%, [sent1].
 sentence1([(L:-true)]) --> proper_noun(N,X),verb_phrase(N,X=>L).%, [sent2].
 
 
-sentence1(C) --> verb_phrase(N,M1), determiner(N,M1,M2,C), noun(N,M2).%, [sent1].
+%sentence1(C) --> verb_phrase(N,M1), determiner(N,M1,M2,C), noun(N,M2).%, [sent1].
+
+sentence1(C) --> reverse_verb_phrase(N,M1), determiner_reverse(N,M1,M2,C),  noun(N,M2).%, [sent1].
 
 sentence1(C) --> determiner_neg(N,M1,M2,C), noun(N,M1), neg_verb_phrase(N,M2).%, [sent1].
 sentence1(C) --> determiner_neg_double(N,M1,M2,C), noun(N,M1), double_verb_phrase(N,M2).%, [sent1].
@@ -88,21 +90,22 @@ neg_verb_phrase(p,M) --> [are, not],property(p,M).
 neg_verb_phrase(p,M) --> [or, not], property(p,M).
 neg_verb_phrase(N,M) --> [doesnt], iverb(N,M).
 
+reverse_verb_phrase(s,M) --> [if],property(s,M).
+reverse_verb_phrase(p,M) --> [if],property(p,M).
+
 double_verb_phrase(s,M) --> [then, not],property(s,M).
 double_verb_phrase(p,M) --> [then, not],property(p,M).
-double_verb_phrase(p,M) --> [then, not], property(p,M).
 double_verb_phrase(N,M) --> [doesnt], iverb(N,M).
 
 property(N,M) --> adjective(N,M).
 property(s,M) --> [a],noun(s,M).
 property(p,M) --> noun(p,M).
 
-
-determiner(p,X=>B,X=>H,[(default(H:-B))]) --> [some].
-
-
 determiner(s,X=>B,X=>H,[(H:-B)]) --> [every].
 determiner(p,X=>B,X=>H,[(H:-B)]) --> [all].
+
+determiner_reverse(s,X=>B,X=>H,[(H:-B)]) --> [then].
+determiner_reverse(p,X=>B,X=>H,[(H:-B)]) --> [then].
 
 determiner_neg_double(s,X=>B,X=>H,[(not(H):-not(B))]) --> [if, not].
 determiner_neg_double(p,X=>B,X=>H,[(not(H):-not(B))]) --> [if, not].
