@@ -18,7 +18,7 @@ prove_question(Query,SessionId,Answer):-
 		transform(Query,Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
- 	; write_debug('trying negative'), prove_rb(not(Query),Rulebase), write_debug("\n\nProved negative! \n") ->
+ 	; write_debug('trying negative'), write_debug(not(Query)), prove_rb(not(Query),Rulebase), write_debug("\n\nProved negative! \n") ->
 		transform(not(Query),Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)

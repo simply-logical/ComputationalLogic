@@ -64,9 +64,13 @@ sentence1(C) --> determiner(N,M1,M2,C),noun(N,M1),verb_phrase(N,M2).%, [sent1].
 sentence1([(L:-true)]) --> proper_noun(N,X),verb_phrase(N,X=>L).%, [sent2].
 
 
+sentence1(C) --> verb_phrase(N,M1), determiner(N,M1,M2,C), noun(N,M2).%, [sent1].
+
 sentence1(C) --> determiner_neg(N,M1,M2,C), noun(N,M1), neg_verb_phrase(N,M2).%, [sent1].
 sentence1(C) --> determiner_neg_double(N,M1,M2,C), noun(N,M1), double_verb_phrase(N,M2).%, [sent1].
 sentence1([(not(L):-true)]) --> proper_noun(N,X),neg_verb_phrase(N,X=>L).%, [sent3].
+
+
 % example "pixie is not red"
 
 %sentence1([(not(M1):-not(M2))]) --> determiner(N,M1,M2,[(M1:-M2)]), noun(N,M1), neg_verb_phrase(N,M2).

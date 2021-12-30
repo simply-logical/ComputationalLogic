@@ -19,22 +19,20 @@
 
 
 %some intial stored rules
-stored_rule(1,[(mortal(X):-human(X))]).
-stored_rule(1,[(mortal(peter):-true)]).
-stored_rule(1,[(teacher(peter):-true)]).
-
-% stored_rule(1,[(		)])
+% stored_rule(1,[(mortal(X):-human(X))]).
 
 stored_rule(1,[(happy(X):-teacher(X))]).
+%stored_rule(1,[(teacher(X):-happy(X))]).
+
+%stored_rule(1,[(not(happy(X)):-not(teacher(X)))]).
 stored_rule(1,[(not(teacher(X)):-not(happy(X)))]).
-
-stored_rule(1,[(not(happy(pixie)):-true)]).
-
 
 stored_rule(1,[(teacher(X):-not(student(X)))]).
 stored_rule(1,[(student(X):-not(teacher(X)))]).
 
-
+stored_rule(1,[(mortal(peter):-true)]).
+stored_rule(1,[(teacher(peter):-true)]).
+stored_rule(1,[(not(happy(pixie)):-true)]).
 
 %%% Prolexa Command Line Interface %%%
 
@@ -66,13 +64,15 @@ handle_utterance(SessionId,Utterance,Answer):-
 	  ( known_rule(Rule,SessionId) -> % A1. It follows from known rules
 			atomic_list_concat(['I already knew that',Utterance],' ',Answer)
 
-		; Rule = [(A :- true)|_], known_rule([(not(A):-true)],SessionId) -> % A2. It contradicts an existing rule
-			retractall(prolexa:stored_rule(_,[(not(A):-true)])),
-			atomic_list_concat(['I\'ll now remember that ',Utterance],' ',Answer),
-			assertz(prolexa:stored_rule(SessionId,Rule))
+
 
 		; Rule = [(not(A) :- true)|_], known_rule([(A:-true)],SessionId) -> % A2. It contradicts an existing rule
 			retractall(prolexa:stored_rule(_,[(A:-true)])),
+			atomic_list_concat(['I\'ll now remember that ',Utterance],' ',Answer),
+			assertz(prolexa:stored_rule(SessionId,Rule))
+
+		; Rule = [(A :- true)|_], write_debug("trying negation, negative head"), known_rule([(not(A):-true)],SessionId) -> % A2. It contradicts an existing rule
+			retractall(prolexa:stored_rule(_,[(not(A):-true)])),
 			atomic_list_concat(['I\'ll now remember that ',Utterance],' ',Answer),
 			assertz(prolexa:stored_rule(SessionId,Rule))
 
