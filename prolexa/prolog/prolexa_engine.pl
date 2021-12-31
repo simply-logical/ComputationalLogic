@@ -18,7 +18,7 @@ prove_question(Query,SessionId,Answer):-
 		transform(Query,Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
- 	; write_debug('trying negative'), write_debug(not(Query)), prove_rb(not(Query),Rulebase), write_debug("\n\nProved negative! \n") ->
+ 	; write_debug(not(Query)), prove_rb(not(Query),Rulebase), ->
 		transform(not(Query),Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
@@ -32,7 +32,7 @@ prove_question(Query,Answer):-
 		transform(Query,Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
-	; write_debug('trying negative'), prove_rb(not(Query),Rulebase) , write_debug("\n\nProved negative! \n")->
+	; prove_rb(not(Query),Rulebase) ->
 		transform(not(Query),Clauses),
 		phrase(sentence(Clauses),AnswerAtomList),
 		atomics_to_string(AnswerAtomList," ",Answer)
@@ -51,7 +51,7 @@ explain_question(Query,SessionId,Answer):-
 		atomic_list_concat([therefore|L]," ",Last),
 		append(Msg,[Last],Messages),
 		atomic_list_concat(Messages," ; ",Answer)
-	; write_debug('trying negative'), prove_rb(not(Query),Rulebase,[],Proof), write_debug("\n\nProved negative! \n") ->
+	; prove_rb(not(Query),Rulebase,[],Proof) ->
 		maplist(pstep2message,Proof,Msg),
 		phrase(sentence1([(not(Query):-true)]),L),
 		atomic_list_concat([therefore|L]," ",Last),
@@ -152,7 +152,7 @@ rule2message(Rule,Message):-
 all_answers(PN,Answer):-
 	findall(Q,(pred(P,1,_),Q=..[P,PN]),Queries), % collect known predicates from grammar
 	maplist(prove_question,Queries,Msg),
-	delete(Msg,"",Messages),
+	delete(Msg,"Sorry, I don\'t think this is the case",Messages),
 	( Messages=[] -> atomic_list_concat(['I know nothing about',PN],' ',Answer)
 	; otherwise -> atomic_list_concat(Messages,".",Answer)
 	).
