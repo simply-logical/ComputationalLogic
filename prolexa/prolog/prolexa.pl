@@ -81,10 +81,16 @@ handle_utterance(SessionId,Utterance,Answer):-
 			atomic_list_concat(['I will remember that',Utterance],' ',Answer)
 	  )
 
-% B. Utterance is a question that can be answered
+% B1. Utterance is a question that can be answered
 	; phrase(question(Query),UtteranceList),
 	  write_debug(query(Query)),
 	  prove_question(Query,SessionId,Answer) -> true
+
+% B2. Utterance is a question existenatial that can be answered
+	; phrase(question_e(Query),UtteranceList),
+	  % write_debug('exists Query'),
+	  % write_debug(query(Query)),
+	  prove_question_exists(Query,SessionId,Answer) -> true
 
 % C. Utterance is a command that succeeds
 	; write_debug("Goal: "), write_debug(Goal), phrase(command(g(Goal,Answer)),UtteranceList),

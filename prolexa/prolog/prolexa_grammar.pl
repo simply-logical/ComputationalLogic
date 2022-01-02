@@ -103,6 +103,8 @@ property(p,M) --> noun(p,M).
 
 determiner(s,X=>B,X=>H,[(H:-B)]) --> [every].
 determiner(p,X=>B,X=>H,[(H:-B)]) --> [all].
+% existential skolem
+determiner(p,sk=>H1,sk=>H2,[(H1:-true),(H2:-true)]) --> [some].
 
 determiner_reverse(s,X=>B,X=>H,[(H:-B)]) --> [then].
 determiner_reverse(p,X=>B,X=>H,[(H:-B)]) --> [then].
@@ -148,6 +150,11 @@ question1(not(Q)) --> [does],proper_noun(_,X),neg_verb_phrase(_,X=>Q).
 %question1((Q1,Q2)) --> [are,some],noun(p,sk=>Q1),
 %					  property(p,sk=>Q2).
 
+%%% questions exists with skolem constants %%%
+question_e(Q) --> qword,question1_e(Q).
+question1_e((Q1,Q2)) --> [are,some],noun(p,sk=>Q1),property(p,sk=>Q2). % with skolem
+% negative version
+% question1_e((Q1,not(Q2))) --> [are,some],noun(p,sk=>Q1), [not], property(p,sk=>Q2). % with skolem
 
 %%% commands %%%
 

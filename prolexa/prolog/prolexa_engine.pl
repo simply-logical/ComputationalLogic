@@ -9,6 +9,43 @@
 
 :- consult(library).
 
+% handle existential questions
+prove_question_exists(Query,SessionId,Answer):-
+	findall(R,prolexa:stored_rule(SessionId,R),Rulebase),     % create a list of all the rules and store them in RuleBase
+	transform(Query,ClausesP),
+	(
+    prove_rb_e(Query,Rulebase),!,        % it can be solved
+		write_debug('Proved'),
+    transform(Query,Clauses),
+		phrase(sentence(Clauses),AnswerAtomList),
+		atomics_to_string(AnswerAtomList," ",Answer)
+		% try negative
+	% ; prove_rb_e(Query_not,Rulebase),!,        % it can be solved
+	% 	write_debug('Proved negation'),
+  %   transform(Query_not,Clauses),
+	% 	phrase(sentence(Clauses),AnswerAtomList),
+	% 	atomics_to_string(AnswerAtomList," ",Answer)
+	; Answer = 'Sorry, I don\'t think this is the case'
+	).
+
+%  here until copy_element_e is taken from https://too.simply-logical.space/src/text/3_part_iii/7.3.html
+prove_rb_e(true,_Rulebase):-!.
+prove_rb_e((A,B),Rulebase):-!,
+    prove_rb_e(A,Rulebase),
+    prove_rb_e(B,Rulebase).
+prove_rb_e(A,Rulebase):-
+    find_clause_e((A:-B),Rulebase),
+    prove_rb_e(B,Rulebase).
+
+% find applicable clause in rulebase
+find_clause_e(Clause,[Rule|_Rules]):-
+    copy_element_e(Clause,Rule).  % don't instantiate Rule
+find_clause_e(Clause,[_Rule|Rules]):-
+    find_clause_e(Clause,Rules).
+
+copy_element_e(X,Ys):-
+    member(X1,Ys),
+    copy_term(X1,X).
 
 %%% Main question-answering engine adapted from nl_shell.pl %%%
 
