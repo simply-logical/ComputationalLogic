@@ -84,20 +84,18 @@ stored_rule(1,[(teacher(peter):-true )]).
 stored_rule(1,[(not(happy(pixie)):-true   )]).
 ```
 
-to have interactions like
+(The 2nd rule is necessary in combination with the first - they do not imply the same thing. The first says that if you are happy you are a teacher, but the second says that everyone not happy is not a teacher, which does not follow from the first, as there could be some teachers who are not happy with only this first rule.)
+
+The above rulebase allows the following interactions, demonstrating each of our added negation features
 
 ```
 ?- prolexa_cli.
 
 prolexa> "is pixie a teacher".
 
-*** query(teacher(pixie))
-
 pixie is not a teacher
 
 prolexa> "who is not a teacher".
-
-*** query(not(teacher(_14358)))
 
 pixie is not a teacher
 
@@ -106,8 +104,24 @@ prolexa> "explain why pixie is a student".
 pixie is not happy ; if not teacher then not happy ; every stud
 ent is not a teacher ; therefore pixie is a student
 
+prolexa> "tell me everything you know".
+
+if happy then teacher. if not teacher then not happy. every stu
+dent is not a teacher. peter is a teacher. pixie is not happy
+
+prolexa> "pixie is happy".
+
+I'll now remember that  pixie is happy
+
+prolexa> "tell me everything you know".
+
+if happy then teacher. if not teacher then not happy. every stu
+dent is not a teacher. peter is a teacher. pixie is happy
+
 prolexa>
 ```
+
+
 
 # Testing
 Tests for added functionality are found in the [tests directory](./tests). Tests are also validated by on CircleCI's continuous integration server, see badge at the top of this readme.
