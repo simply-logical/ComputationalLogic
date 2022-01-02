@@ -35,9 +35,79 @@ Extending the grammar to handle queries was more complex. It needs to be able to
 - `A(X):-not(B(X))`
 - `not(A(X)) :- true`
 
+this required the addition of new determiners, verb phrases and questions for example:
 
+```
+determiner_neg(s,X=>H,X=>B,[(H:-not(B))]) --> [every].
+determiner_neg(p,X=>H,X=>B,[(H:-not(B))]) --> [all].
 
+question1(not(Q)) --> [is], proper_noun(N,X), [not], property(N,X=>Q).
 
+neg_verb_phrase(s,M) --> [is, not],property(s,M).
+neg_verb_phrase(p,M) --> [are, not],property(p,M).
+
+```
+
+We also add to the `prolexa.pl` main file to check if an added rule directly conflicts with an existing rule. For example `happy(peter)` should replace `not(happy(peter))` and vice versa. This is fairly simple to implement, and prevents conflicting rules in proofs:
+
+```
+% A. Utterance is a sentence
+	( phrase(sentence(Rule),UtteranceList),
+	  ( known_rule(Rule,SessionId) -> % A1. It follows from known rules
+			atomic_list_concat(['I already knew that',Utterance],' ',Answer)
+		; Rule = [(not(A) :- true)|_],
+		 known_rule([(A:-true)],SessionId) -> % A2. It contradicts an existing rule
+			retractall(prolexa:stored_rule(_,[(A:-true)])),
+			atomic_list_concat(['I\'ll now remember that ',Utterance],' ',Answer),
+			assertz(prolexa:stored_rule(SessionId,Rule))
+
+		; Rule = [(A :- true)|_], % write_debug("trying negation, negative head"),
+		  known_rule([(not(A):-true)],SessionId) -> % A2. It contradicts an existing rule
+			retractall(prolexa:stored_rule(_,[(not(A):-true)])),
+			atomic_list_concat(['I\'ll now remember that ',Utterance],' ',Answer),
+			assertz(prolexa:stored_rule(SessionId,Rule))
+
+	  ; otherwise -> % A3. It doesn't follow, so add to stored rules'
+			assertz(prolexa:stored_rule(SessionId,Rule)),
+			atomic_list_concat(['I will remember that',Utterance],' ',Answer)
+	  )
+```
+
+After these additions, we use a rulebase such as
+
+```
+stored_rule(1,[(teacher(X):-happy(X))]).
+stored_rule(1,[(not(teacher(X)):-not(happy(X)))]).
+stored_rule(1,[(student(X):-not(teacher(X)))]).
+
+stored_rule(1,[(teacher(peter):-true )]).
+stored_rule(1,[(not(happy(pixie)):-true   )]).
+```
+
+to have interactions like
+
+```
+?- prolexa_cli.
+
+prolexa> "is pixie a teacher".
+
+*** query(teacher(pixie))
+
+pixie is not a teacher
+
+prolexa> "who is not a teacher".
+
+*** query(not(teacher(_14358)))
+
+pixie is not a teacher
+
+prolexa> "explain why pixie is a student".
+
+pixie is not happy ; if not teacher then not happy ; every stud
+ent is not a teacher ; therefore pixie is a student
+
+prolexa>
+```
 
 # Testing
 Tests for added functionality are found in the [tests directory](./tests). Tests are also validated by on CircleCI's continuous integration server, see badge at the top of this readme.
