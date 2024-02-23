@@ -1,4 +1,4 @@
-## 2022-23 Assignment for COMSM0022 Computational Logic for Artificial Intelligence
+## 2023-24 Assignment for COMSM0022 Computational Logic for Artificial Intelligence
 
 The goal of the assignment is to extend the reasoning capabilities of the Prolexa Q&A assistant. Here are some reasoning patterns Prolexa cannot currently handle. 
 
